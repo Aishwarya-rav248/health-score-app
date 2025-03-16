@@ -105,7 +105,7 @@ else:
         score -= 10
 
     # Allergy severity
-    patient_allergies = allergies_df[allergies_df['patient'] == patient_id]
+    patient_allergies = allergies_df[allergies_df['PATIENT'] == patient_id]
     if 'Severe' in patient_allergies['severity'].values:
         score -= 5
 
