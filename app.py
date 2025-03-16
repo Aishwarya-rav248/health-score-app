@@ -49,7 +49,7 @@ else:
 
     # Check if patient exists in dataset
     patient_id = st.session_state.patient_id
-    obs = observations_df[observations_df['patient'] == patient_id]
+    obs = observations_df[observations_df['Patient'] == patient_id]
 
     # Default values from dataset or manual
     weight = obs['weight'].values[0] if 'weight' in obs.columns and not obs['weight'].isnull().all() else 70
