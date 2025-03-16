@@ -130,3 +130,32 @@ else:
     if heart_rate > 80:
         st.write(f"2. Heart Rate Management ({heart_rate} bpm) – Include stress reduction techniques.")
     st.write(f"3. Regular Monitoring – Track BP, cholesterol, glucose levels.")
+
+# ----------------------------
+# Back Button to go to Login Page
+if st.button("Back to Login"):
+    # Clear session state
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.rerun()
+
+import plotly.graph_objects as go
+
+# ----------------------------
+# Gauge Chart for Health Score
+fig = go.Figure(go.Indicator(
+    mode = "gauge+number",
+    value = score,
+    gauge = {
+        'axis': {'range': [0, 100]},
+        'bar': {'color': "darkblue"},
+        'steps': [
+            {'range': [0, 49], 'color': "red"},
+            {'range': [50, 79], 'color': "yellow"},
+            {'range': [80, 100], 'color': "green"}
+        ],
+    },
+    title = {'text': "Health Score Gauge"}
+))
+
+st.plotly_chart(fig)
