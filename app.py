@@ -39,7 +39,7 @@ if not st.session_state.logged_in:
         st.session_state.logged_in = True
         st.session_state.patient_id = patient_id
         st.session_state.name = first_name + " " + last_name
-        st.experimental_rerun()
+        st.rerun()
 
 # ----------------------------
 # Dashboard Page
