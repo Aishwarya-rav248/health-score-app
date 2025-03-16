@@ -100,7 +100,7 @@ else:
         score -= 5
 
     # Chronic conditions
-    patient_conditions = conditions_df[conditions_df['patient'] == patient_id]
+    patient_conditions = conditions_df[conditions_df['PATIENT'] == patient_id]
     if len(patient_conditions) > 2:
         score -= 10
 
