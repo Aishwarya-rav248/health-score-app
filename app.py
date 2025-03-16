@@ -122,27 +122,8 @@ else:
     else:
         st.error("Unhealthy: Immediate Action Required!")
 
-    # ----------------------------
-    # Preventive Measures
-    st.subheader("Preventive Measures")
-    if bmi:
-        st.write(f"1. BMI Optimization (BMI: {bmi:.2f}) – Focus on balanced diet & exercise.")
-    if heart_rate > 80:
-        st.write(f"2. Heart Rate Management ({heart_rate} bpm) – Include stress reduction techniques.")
-    st.write(f"3. Regular Monitoring – Track BP, cholesterol, glucose levels.")
+    import plotly.graph_objects as go
 
-# ----------------------------
-# Back Button to go to Login Page
-if st.button("Back to Login"):
-    # Clear session state
-    for key in st.session_state.keys():
-        del st.session_state[key]
-    st.rerun()
-
-import plotly.graph_objects as go
-
-# ----------------------------
-# Gauge Chart for Health Score
 fig = go.Figure(go.Indicator(
     mode = "gauge+number",
     value = score,
@@ -159,3 +140,20 @@ fig = go.Figure(go.Indicator(
 ))
 
 st.plotly_chart(fig)
+
+    # ----------------------------
+    # Preventive Measures
+    st.subheader("Preventive Measures")
+    if bmi:
+        st.write(f"1. BMI Optimization (BMI: {bmi:.2f}) – Focus on balanced diet & exercise.")
+    if heart_rate > 80:
+        st.write(f"2. Heart Rate Management ({heart_rate} bpm) – Include stress reduction techniques.")
+    st.write(f"3. Regular Monitoring – Track BP, cholesterol, glucose levels.")
+
+# ----------------------------
+# Back Button to go to Login Page
+if st.button("Back to Login"):
+    # Clear session state
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    st.rerun()
