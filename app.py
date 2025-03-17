@@ -49,109 +49,99 @@ if not st.session_state.logged_in:
         else:
             st.warning("Please fill in all required fields!")
 
-# ----------------------------
-# Dashboard Page
-else:
+# ----------------------------- Dashboard Page -----------------------------
+import pandas as pd
+import streamlit as st
+import plotly.graph_objects as go
+
+# Load Observations Dataset
+observations_df = pd.read_csv('observations.csv')
+
+# Filter observations for logged-in patient
+patient_id = st.session_state.patient_id
+patient_observations = observations_df[observations_df['PATIENT'] == patient_id]
+
+# Check if patient data exists
+if not patient_observations.empty:
     st.title(f"Welcome {st.session_state.name}")
     st.subheader("Enter Health Metrics")
-
-    patient_id = st.session_state.patient_id
-    obs = observations_df[observations_df['PATIENT'] == patient_id]
-
-    # Default values (can customize based on available data)
-    weight = 70
-    height = 170
-    bp = 120
-    heart_rate = 80
-    smoking = 'No'
-
-    # Health Metrics Inputs
+    
     col1, col2 = st.columns(2)
+    
     with col1:
-        weight = st.number_input('Weight (kg)', 30, 200, int(weight))
-        height = st.number_input('Height (cm)', 100, 250, int(height))
-        bmi_manual = st.number_input('BMI (optional)', 10.0, 50.0, step=0.1)
-        smoking = st.selectbox('Smoking', ['No', 'Yes'], index=0 if smoking == 'No' else 1)
-
+        weight = st.number_input('Weight (kg)', min_value=0, max_value=200, step=1)
+        height = st.number_input('Height (cm)', min_value=0, max_value=250, step=1)
+        bmi_manual = st.number_input('BMI (optional)', min_value=0.0, max_value=50.0, step=0.1)
+        smoking = st.selectbox('Smoking', ['No', 'Yes'])
+        
     with col2:
-        bp = st.number_input('Blood Pressure (mm Hg)', 80, 200, int(bp))
-        heart_rate = st.number_input('Heart Rate (bpm)', 40, 180, int(heart_rate))
-
-    # ----------------------------
-    # Calculate BMI
-    if bmi_manual > 10:
+        bp = st.number_input('Blood Pressure (mm Hg)', min_value=0, max_value=200, step=1)
+        heart_rate = st.number_input('Heart Rate (bpm)', min_value=0, max_value=180, step=1)
+    
+    # --------------------- Calculate BMI ---------------------
+    if bmi_manual > 0:
         bmi = bmi_manual
     elif height > 0:
-        bmi = weight / ((height / 100) ** 2)
+        bmi = weight / ((height/100)**2)
     else:
         bmi = None
-
-    st.write(f"**Calculated BMI:** {bmi:.2f}")
-
-    # ----------------------------
-    # Health Score Calculation
-    score = 100
-
+    
     if bmi:
-        if bmi > 30 or bmi < 18:
-            score -= 10
+        st.write(f"**Calculated BMI:** {bmi:.2f}")
+    
+    # --------------------- Button to Calculate Score ---------------------
+    if st.button("Calculate Health Score"):
+        if height == 0 or weight == 0 or bp == 0 or heart_rate == 0:
+            st.warning("Please fill all fields correctly.")
+        else:
+            # --------------------- Health Score Calculation ---------------------
+            score = 100
+            if bmi:
+                if bmi > 30 or bmi < 18:
+                    score -= 10
+            if bp > 140:
+                score -= 10
+            if heart_rate > 100:
+                score -= 5
+            if smoking == 'Yes':
+                score -= 5
 
-    if bp > 140:
-        score -= 10
+            # --------------------- Gauge Chart ---------------------
+            st.subheader("Health Score")
+            gauge = go.Figure(go.Indicator(
+                mode = "gauge+number",
+                value = score,
+                gauge = {'axis': {'range': [0, 100]},
+                         'bar': {'color': "green" if score >= 80 else "orange" if score >=50 else "red"},
+                         'steps': [
+                             {'range': [0, 49], 'color': "red"},
+                             {'range': [50, 79], 'color': "orange"},
+                             {'range': [80, 100], 'color': "green"}
+                         ]},
+                domain = {'x': [0, 1], 'y': [0, 1]}
+            ))
+            st.plotly_chart(gauge)
 
-    if heart_rate > 100:
-        score -= 5
+            # --------------------- Score Display ---------------------
+            if score >= 80:
+                st.success("Excellent")
+            elif score >= 50:
+                st.warning("Needs Improvement")
+            else:
+                st.error("Unhealthy: Immediate Action Required!")
+            
+            # --------------------- Preventive Measures ---------------------
+            st.subheader("Preventive Measures")
+            if bmi:
+                st.write(f"1. BMI Optimization (BMI: {bmi:.2f}) – Focus on balanced diet & exercise.")
+            if heart_rate > 80:
+                st.write(f"2. Heart Rate Management ({heart_rate} bpm) – Stress reduction techniques.")
+            st.write("3. Regular Monitoring – Track BP, cholesterol, glucose levels.")
 
-    # Chronic conditions
-    patient_conditions = conditions_df[conditions_df['PATIENT'] == patient_id]
-    if len(patient_conditions) > 2:
-        score -= 10
-
-    # Allergy severity check
-    patient_allergies = allergies_df[allergies_df['PATIENT'] == patient_id]
-    if 'severity' in patient_allergies.columns:
-        if 'Severe' in patient_allergies['severity'].values:
-            score -= 5
-
-    if smoking == 'Yes':
-        score -= 5
-
-    # ----------------------------
-    # Health Score Gauge Visualization
-    st.subheader("Health Score")
-
-    gauge = go.Figure(go.Indicator(
-        mode="gauge+number",
-        value=score,
-        gauge={'axis': {'range': [0, 100]},
-               'bar': {'color': "green" if score >= 80 else "orange" if score >= 50 else "red"},
-               'steps': [
-                   {'range': [0, 49], 'color': "red"},
-                   {'range': [50, 79], 'color': "orange"},
-                   {'range': [80, 100], 'color': "green"}
-               ]},
-        domain={'x': [0, 1], 'y': [0, 1]}
-    ))
-    st.plotly_chart(gauge)
-
-    if score >= 80:
-        st.success("Excellent")
-    elif score >= 50:
-        st.warning("Needs Improvement")
-    else:
-        st.error("Unhealthy: Immediate Action Required!")
-
-    # ----------------------------
-    # Preventive Measures
-    st.subheader("Preventive Measures")
-    if bmi:
-        st.write(f"1. BMI Optimization (BMI: {bmi:.2f}) – Focus on balanced diet & exercise.")
-    if heart_rate > 80:
-        st.write(f"2. Heart Rate Management ({heart_rate} bpm) – Include stress reduction techniques.")
-    st.write("3. Regular Monitoring – Track BP, cholesterol, glucose levels.")
-
-    # ----------------------------
-    # Back Button to Login
+    # --------------------- Back to Login Button ---------------------
     if st.button('Back to Login'):
         st.session_state.logged_in = False
-        st.rerun()
+        st.experimental_rerun()
+        
+else:
+    st.error("Patient data not found in observations dataset.")
