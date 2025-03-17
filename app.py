@@ -39,7 +39,7 @@ if not st.session_state.logged_in:
         # Validate fields
         if patient_id.strip() != "" and first_name.strip() != "" and last_name.strip() != "":
             # Check if Patient ID exists
-            if patient_id in patients_df['patient'].astype(str).values:
+            if patient_id in patients_df['PATIENT'].astype(str).values:
                 st.session_state.logged_in = True
                 st.session_state.patient_id = patient_id
                 st.session_state.name = first_name + " " + last_name
