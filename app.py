@@ -36,14 +36,18 @@ if not st.session_state.logged_in:
         gender = st.selectbox('Gender', ['Male', 'Female', 'Other'])
 
     if st.button('Submit'):
-        # Check if Patient ID exists in patients dataset
-        if patient_id in patients_df['Id'].values:
-            st.session_state.logged_in = True
-            st.session_state.patient_id = patient_id
-            st.session_state.name = first_name + " " + last_name
-            st.experimental_rerun()
+        # Validate fields
+        if patient_id.strip() != "" and first_name.strip() != "" and last_name.strip() != "":
+            # Check if Patient ID exists
+            if patient_id in patients_df['patient'].astype(str).values:
+                st.session_state.logged_in = True
+                st.session_state.patient_id = patient_id
+                st.session_state.name = first_name + " " + last_name
+                st.rerun()
+            else:
+                st.error("Invalid Patient ID. Please check your input.")
         else:
-            st.error("Invalid Patient ID. Please check your input.")
+            st.warning("Please fill in all required fields!")
 
 # ----------------------------
 # Dashboard Page
@@ -54,7 +58,7 @@ else:
     patient_id = st.session_state.patient_id
     obs = observations_df[observations_df['PATIENT'] == patient_id]
 
-    # Default values from dataset or manual input
+    # Default values (can customize based on available data)
     weight = 70
     height = 170
     bp = 120
@@ -150,4 +154,4 @@ else:
     # Back Button to Login
     if st.button('Back to Login'):
         st.session_state.logged_in = False
-        st.experimental_rerun()
+        st.rerun()
