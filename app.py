@@ -23,12 +23,15 @@ if not st.session_state.logged_in:
     with col2:
         first_name = st.text_input('First Name')
         gender = st.selectbox('Gender', ['Male', 'Female', 'Other'])
-    
+
     if st.button('Submit'):
+    if patient_id and first_name and last_name and dob:
         st.session_state.logged_in = True
         st.session_state.patient_id = patient_id
         st.session_state.name = first_name + " " + last_name
         st.rerun()
+    else:
+        st.warning("Please fill in all fields before submitting!")
 
 # -----------------------------
 # Dashboard Page
