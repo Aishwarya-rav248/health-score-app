@@ -49,6 +49,16 @@ if not st.session_state.logged_in:
         else:
             st.warning("Please fill in all required fields!")
 
+# Add here at top of dashboard page:
+if 'patient_id' not in st.session_state:
+    st.warning("Please login first.")
+    st.experimental_rerun()
+
+# Load datasets AFTER checking:
+observations_df = pd.read_csv('observations.csv')
+patient_id = st.session_state.patient_id
+patient_observations = observations_df[observations_df['PATIENT'] == patient_id]
+
 # ----------------------------- Dashboard Page -----------------------------
 import pandas as pd
 import streamlit as st
