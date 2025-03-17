@@ -62,7 +62,7 @@ patient_observations = observations_df[observations_df['PATIENT'] == patient_id]
 
 # ----------------------------
 # Dashboard UI
-st.title(f"Welcome {patient_name}")
+st.title(f"Welcome {st.session_state.name}")
 st.subheader("Enter Health Metrics")
 
 # Show patient exists or not
