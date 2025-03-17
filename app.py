@@ -44,7 +44,7 @@ def login_page():
                 st.session_state.patient_id = patient_id
                 st.session_state.name = first_name + " " + last_name
                 st.session_state.page = 'dashboard'
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Invalid Patient ID. Please check your input.")
         else:
@@ -57,7 +57,7 @@ def dashboard_page():
     if 'logged_in' not in st.session_state or not st.session_state.logged_in:
         st.warning("Please login first.")
         st.session_state.page = 'login'
-        st.experimental_rerun()
+        st.rerun()
 
     # Load datasets AFTER checking:
     patient_id = st.session_state.patient_id
@@ -144,7 +144,7 @@ def dashboard_page():
         if st.button('Back to Login'):
             st.session_state.logged_in = False
             st.session_state.page = 'login'
-            st.experimental_rerun()
+            st.rerun()
             
     else:
         st.error("Patient data not found in observations dataset.")
