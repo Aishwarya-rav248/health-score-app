@@ -9,8 +9,6 @@ observations_df = pd.read_csv('observations.csv')
 conditions_df = pd.read_csv('conditions.csv')
 allergies_df = pd.read_csv('allergies.csv')
 
-st.write("Column names:", patients_df.columns.tolist())
-
 # Clean column names
 patients_df.columns = patients_df.columns.str.strip()
 observations_df.columns = observations_df.columns.str.strip()
