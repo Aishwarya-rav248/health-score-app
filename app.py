@@ -52,7 +52,7 @@ if not st.session_state.logged_in:
 # Add here at top of dashboard page:
 if 'patient_id' not in st.session_state:
     st.warning("Please login first.")
-    st.experimental_rerun()
+    st.rerun()
 
 # Load datasets AFTER checking:
 observations_df = pd.read_csv('observations.csv')
@@ -151,7 +151,7 @@ if not patient_observations.empty:
     # --------------------- Back to Login Button ---------------------
     if st.button('Back to Login'):
         st.session_state.logged_in = False
-        st.experimental_rerun()
+        st.rerun()
         
 else:
     st.error("Patient data not found in observations dataset.")
