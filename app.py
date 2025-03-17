@@ -114,4 +114,5 @@ else:
     # Back Button to Login
     if st.button('Back to Login'):
         st.session_state.logged_in = False
-        st.experimental_rerun()
+        st.rerun()
+
