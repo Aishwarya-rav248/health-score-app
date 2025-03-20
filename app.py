@@ -23,6 +23,7 @@ if 'page' not in st.session_state:
 # ----------------------------
 # Login Page
 def login_page():
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Health Score Tracker</h1>", unsafe_allow_html=True)
     st.title("Login")
     col1, col2 = st.columns(2)
 
