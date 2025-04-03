@@ -29,13 +29,7 @@ def login_page():
 
     with col1:
         patient_id = st.text_input('Patient ID')
-        last_name = st.text_input('Last Name')
-        dob = st.date_input('DOB')
-
-    with col2:
-        first_name = st.text_input('First Name')
-        gender = st.selectbox('Gender', ['Male', 'Female', 'Other'])
-
+        
     if st.button('Submit'):
         # Validate fields
         if patient_id.strip() != "" and first_name.strip() != "" and last_name.strip() != "":
